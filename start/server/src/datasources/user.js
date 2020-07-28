@@ -17,11 +17,8 @@ class UserAPI extends DataSource {
     this.context = config.context;
   }
 
-  /**
-   * User can be called with an argument that includes email, but it doesn't
-   * have to be. If the user is already on the context, it will use that user
-   * instead
-   */
+  // User can be called with an argument that includes email, but it doesn't
+  // have to be. If the user is already on the context, it will use that user instead
   async findOrCreateUser({ email: emailArg } = {}) {
     const email =
       this.context && this.context.user ? this.context.user.email : emailArg;
@@ -37,7 +34,7 @@ class UserAPI extends DataSource {
 
     let results = [];
 
-    // for each launch id, try to book the trip and add it to the results array
+    // For each launch id, try to book the trip and add it to the results array
     // if successful
     for (const launchId of launchIds) {
       const res = await this.bookTrip({ launchId });

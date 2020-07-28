@@ -10,26 +10,28 @@ const store = createStore();
 
 const isEmail = require('isemail');
 
-// If you use this.context in a datasource, 
-// it's critical to create a new instance in the dataSources function, 
-// rather than sharing a single instance. 
-// Otherwise, initialize might be called during 
-// the execution of asynchronous code for a particular user, 
-// replacing this.context with the context of another user.
+/**
+ * If you use this.context in a datasource, 
+ * it's critical to create a new instance in the dataSources function, 
+ * rather than sharing a single instance.
+ * Otherwise, initialize might be called during 
+ * the execution of asynchronous code for a particular user, 
+ * replacing this.context with the context of another user.
+ */
 const server = new ApolloServer({
   context: async ({ req }) => {
     // simple auth check on every request
     const auth = req.headers && req.headers.authorization || '';
     const email = Buffer.from(auth, 'base64').toString('ascii');
     if (!isEmail.validate(email)) return { user: null };
-    // find a user by their email
+    // Find a user by their email
     const users = await store.users.findOrCreate({ where: { email } });
     const user = users && users[0] || null;
     return { user: { ...user.dataValues } };
   },
   typeDefs,
   resolvers,
-  engine: {    
+  engine: {
     reportSchema: true
   },
   dataSources: () => ({
