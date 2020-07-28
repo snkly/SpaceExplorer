@@ -2,9 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {
   ApolloClient,
-  NormalizedCacheObject,
   ApolloProvider,
   useQuery,
+  InMemoryCache,
   gql,
 } from '@apollo/client';
 
@@ -22,7 +22,7 @@ export const typeDefs = gql`
 
 // Set up our apollo-client to point at the server we created
 // this can be local or a remote endpoint
-const client: ApolloClient<NormalizedCacheObject> = new ApolloClient({
+const client = new ApolloClient({
   cache,
   uri: 'http://localhost:4000/graphql',
   headers: {
