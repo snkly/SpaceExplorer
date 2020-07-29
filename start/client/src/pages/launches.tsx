@@ -5,6 +5,12 @@ import { useQuery, gql } from '@apollo/client'
 import { LaunchTile, Header, Button, Loading } from '../components';
 import * as GetLaunchListTypes from './__generated__/GetLaunchList';
 
+/**
+ * We define a GraphQL fragment by giving it a name (LaunchTile) 
+ * and defining it on a type on our schema (Launch). 
+ * The name we give our fragment can be anything, 
+ * but the type must correspond to a type in our schema.
+ */
 export const LAUNCH_TILE_DATA = gql`
   fragment LaunchTile on Launch {
     __typename
@@ -37,16 +43,7 @@ const GET_LAUNCHES = gql`
       cursor
       hasMore
       launches {
-        id
-        isBooked
-        rocket {
-          id
-          name
-        }
-        mission {
-          name
-          missionPatch
-        }
+        ...LaunchTile
       }
     }
   }
