@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { RouteComponentProps } from '@reach/router';
 import { useQuery, gql } from '@apollo/client'
 
@@ -60,6 +60,8 @@ const Launches: React.FC<LaunchesProps> = () => {
     data,
     loading,
     error,
+    // To build a paginated list with Apollo, destructure the 
+    // fetchMore function from the useQuery result object:
     fetchMore
   } = useQuery<
     GetLaunchListTypes.GetLaunchList,
@@ -70,8 +72,20 @@ const Launches: React.FC<LaunchesProps> = () => {
   if (error) return <p>ERROR</p>;
   if (!data) return <p>Not found</p>;
 
+  /**
+   * Pagination: Using Apollo fetchMore, connect it to a 'Load More button' to get more items when clicked. 
+   * Specify an updateQuery function on the return object from fetchMore 
+   * that tells the Apollo cache how to update our query with the new items we're fetching.
+   * 
+   * 1. First, we check to see if we have more launches available in our query. 
+   *    If we do, we render a button with a click handler that calls the fetchMore function from Apollo. 
+   *    The fetchMore function receives new variables for the list of launches query, which is represented by our cursor.
+   * 
+   * 2. We also define the updateQuery function to tell Apollo how to update the list of launches in the cache. 
+   *    To do this, we take the previous query result and combine it with the new query result from fetchMore.
+   */
   return (
-    <Fragment>
+    <>
       <Header />
       {data.launches &&
         data.launches.launches &&
@@ -106,7 +120,7 @@ const Launches: React.FC<LaunchesProps> = () => {
           </Button>
         )
       }
-    </Fragment>
+    </>
   );
 }
 
