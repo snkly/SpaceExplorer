@@ -1,4 +1,4 @@
-import React, { Fragment }  from 'react';
+import React, { Fragment } from 'react';
 import { RouteComponentProps } from '@reach/router';
 import { useQuery, gql } from '@apollo/client'
 
@@ -52,17 +52,17 @@ const GET_LAUNCHES = gql`
   }
 `;
 
-interface LaunchesProps extends RouteComponentProps {}
+interface LaunchesProps extends RouteComponentProps { }
 
 // Pass GET_LAUNCHES query to Apollo's useQuery component to render the list.
 const Launches: React.FC<LaunchesProps> = () => {
-  const { 
-    data, 
-    loading, 
+  const {
+    data,
+    loading,
     error,
     fetchMore
   } = useQuery<
-    GetLaunchListTypes.GetLaunchList, 
+    GetLaunchListTypes.GetLaunchList,
     GetLaunchListTypes.GetLaunchListVariables
   >(GET_LAUNCHES);
 
@@ -78,6 +78,34 @@ const Launches: React.FC<LaunchesProps> = () => {
         data.launches.launches.map((launch: any) => (
           <LaunchTile key={launch.id} launch={launch} />
         ))}
+      {data.launches &&
+        data.launches.hasMore && (
+          <Button
+            onClick={() =>
+              fetchMore({
+                variables: {
+                  after: data.launches.cursor,
+                },
+                updateQuery: (prev, { fetchMoreResult, ...rest }) => {
+                  if (!fetchMoreResult) return prev;
+                  return {
+                    ...fetchMoreResult,
+                    launches: {
+                      ...fetchMoreResult.launches,
+                      launches: [
+                        ...prev.launches.launches,
+                        ...fetchMoreResult.launches.launches,
+                      ],
+                    },
+                  };
+                },
+              })
+            }
+          >
+            Load More
+          </Button>
+        )
+      }
     </Fragment>
   );
 }
