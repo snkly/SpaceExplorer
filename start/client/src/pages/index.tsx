@@ -14,8 +14,6 @@ export default function Pages() {
         <Router primary={false} component={Fragment}>
           <Launches path="/" />
           <Launch path="launch/:launchId" />
-          <Cart path="cart" />
-          <Profile path="profile" />
         </Router>
       </PageContainer>
       <Footer />
